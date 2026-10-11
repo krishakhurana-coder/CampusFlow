@@ -14,7 +14,7 @@ const [eventCategory, setEventCategory] = useState("Workshop");
 const [venue, setVenue] = useState("");
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/events")
+  fetch("https://campusflow-l6r0.onrender.com/api/events")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Could not load events");
@@ -42,7 +42,7 @@ const addEvent = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await fetch("http://localhost:5000/api/events", {
+    const response = await fetch("https://campusflow-l6r0.onrender.com/api/events", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
