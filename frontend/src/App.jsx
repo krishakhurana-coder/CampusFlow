@@ -8,6 +8,10 @@ function App() {
 const [events, setEvents] = useState([]);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState("");
+const [showForm, setShowForm] = useState(false);
+const [title, setTitle] = useState("");
+const [eventCategory, setEventCategory] = useState("Workshop");
+const [venue, setVenue] = useState("");
 
 useEffect(() => {
   fetch("http://localhost:5000/api/events")
@@ -34,6 +38,40 @@ useEffect(() => {
     "Sports",
   ];
 
+const addEvent = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch("http://localhost:5000/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        category: eventCategory,
+        venue,
+        date: "2026-11-01",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Could not add event");
+      return;
+    }
+
+    setEvents((currentEvents) => [...currentEvents, data.event]);
+    setTitle("");
+    setVenue("");
+    setShowForm(false);
+    alert("Event added successfully!");
+  } catch {
+    alert("Could not add event. Please check the backend.");
+  }
+};
+
   const filteredEvents = events.filter((event) => {
 const title = (event.title || "").toLowerCase();
 const description = (event.description || "").toLowerCase();
@@ -58,6 +96,42 @@ const matchesSearch =
 
       <main className="main">
         <h2>Discover Campus Events</h2>
+<button onClick={() => setShowForm(!showForm)}>
+  {showForm ? "Cancel" : "+ Add Event"}
+</button>
+
+{showForm && (
+  <form onSubmit={addEvent}>
+    <input
+      type="text"
+      placeholder="Event title"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      required
+    />
+
+    <select
+      value={eventCategory}
+      onChange={(e) => setEventCategory(e.target.value)}
+    >
+      <option value="Workshop">Workshop</option>
+      <option value="Competition">Competition</option>
+      <option value="Cultural">Cultural</option>
+      <option value="Sports">Sports</option>
+    </select>
+
+    <input
+      type="text"
+      placeholder="Venue"
+      value={venue}
+      onChange={(e) => setVenue(e.target.value)}
+      required
+    />
+
+    <button type="submit">Save Event</button>
+  </form>
+)}
+
         <p>Find workshops, competitions, and activities happening around you.</p>
 
 {loading && <p>Loading campus events...</p>}
