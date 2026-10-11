@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CampusFlow API Test</title>
+</head>
+<body>
+  <h1>CampusFlow API Test</h1>
+  <button id="testButton">Send Test Event</button>
+  <pre id="result">Click the button to test the backend.</pre>
+
+  <script>
+    document.getElementById("testButton").addEventListener("click", async () => {
+      const result = document.getElementById("result");
+      result.textContent = "Sending...";
+
+      try {
+        const response = await fetch("http://localhost:5000/api/events", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            title: "Test Campus Event",
+            category: "Workshop"
+          })
+        });
+
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = "Request failed: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
